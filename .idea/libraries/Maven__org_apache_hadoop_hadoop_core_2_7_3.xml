@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.hadoop:hadoop-core:2.7.3">
+    <CLASSES />
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/hadoop/hadoop-core/2.7.3/hadoop-core-2.7.3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/hadoop/hadoop-core/2.7.3/hadoop-core-2.7.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
