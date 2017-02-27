@@ -3,20 +3,22 @@ import java.util.HashMap;
 
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /*
     these inputs, must match the ones from the mapper class
  */
 
-public class NetFlixTopTenMoviesReducer extends Reducer<IntWritable, FloatWritable, IntWritable, FloatWritable> {
+public class NetFlixTopTenMoviesReducer extends Reducer<Text, FloatWritable, Text, FloatWritable> {
 
     private FloatWritable result = new FloatWritable();
     private float sum;
     private int count;
 
 
-    public void reduce(IntWritable key, Iterable<FloatWritable> values, Context context) throws IOException, InterruptedException
+    public void reduce(Text key, Iterable<FloatWritable> values, Context context) throws IOException, InterruptedException
     {
         /*
             The format is now this (this example is not our data)
@@ -32,6 +34,8 @@ public class NetFlixTopTenMoviesReducer extends Reducer<IntWritable, FloatWritab
             count++;
         }
 
+        // set data
+        result.set((float)sum/(float)count);
         // write result to file
         context.write(key, result);
     }

@@ -1,6 +1,8 @@
 // http://www.drdobbs.com/database/hadoop-writing-and-running-your-first-pr/240153197
 // http://stackoverflow.com/questions/11086263/understanding-longwritable
 // http://stackoverflow.com/questions/11122832/hadoop-mapreduce-possible-to-define-two-mappers-and-reducers-in-one-hadoop-job
+// http://stackoverflow.com/questions/14922087/hadoop-longwritable-cannot-be-cast-to-org-apache-hadoop-io-intwritable
+// http://stackoverflow.com/questions/17262188/type-mismatch-in-key-from-map-expected-org-apache-hadoop-io-text-recieved-org
 
 /*
 
@@ -45,7 +47,7 @@
 
 import java.io.IOException;
 import org.apache.hadoop.io.FloatWritable;
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -58,23 +60,31 @@ import org.apache.hadoop.mapreduce.Mapper;
     In our program, we will use classes that are wrappers that are part of hadoop to be
     able to accomplish serialization
 
-    In our case, both input/out using intwritable and floatwritable, you must define the output for the context.write
  */
 
-public class NetFlixTopTenMoviesMapper extends Mapper<IntWritable, Text, IntWritable, FloatWritable>{
+
+// for a mapper classes, the key is always LongWritable, but you can choose the outut to be
+// LongWritable = always this, see link above,
+// Text = our value is a text, each row of the file is a text,
+// Text = returning key as a text, i assume it would also work as int,
+// FloatWritable = needed for average, I think it is ok keeping this as float since later we need to do avg which we cant as a Text
+public class NetFlixTopTenMoviesMapper extends Mapper<LongWritable, Text, Text, FloatWritable>{
 
     /*
          With two instance variables, the map() method is called once per input record, so it pays to avoid unnecessary object creation.
      */
-    private IntWritable new_key = new IntWritable();
+    private Text new_key = new Text();
     private FloatWritable new_value = new FloatWritable();
 
     @Override
-    protected void map(IntWritable key, Text value, Context context) throws IOException, InterruptedException {
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         // split row up by comma (see input format above)
         String[] output =  value.toString().split(",");
         // 0 index ia movie id, 1 is user id (not needed for this job), 2 index is the rating
-        new_key.set(Integer.valueOf(output[0]));
+
+//        System.out.println("KEY: " + output[0] + " value: " + output[2]);
+
+        new_key.set(output[0]);
         new_value.set(Float.valueOf(output[2]));
         context.write(new_key, new_value);
     }
