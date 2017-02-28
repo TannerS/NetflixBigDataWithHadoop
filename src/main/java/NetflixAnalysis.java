@@ -23,24 +23,43 @@ public class NetflixAnalysis  extends Configured implements Tool
         {
             int status = ToolRunner.run(new NetflixAnalysis(), args);
 //
-            int[] movies = getTopTenMovies("txt/TopTenMoviesSorted/part-r-00000");
-            HashMap<Integer, String> titles = loadTitles("txt/movie_titles.txt");
+//            int[] movies = getTopTenMovies("txt/TopTenMoviesSorted/part-r-00000");
+            int[] movies = getTopTenMovies(args[2] + "/part-r-00000");
+            HashMap<Integer, String> titles = loadTitles(args[5]);
 
             System.out.println("Top Movies");
+            System.out.println(System.getProperty("user.dir"));
 
-            for(int i = 0 ;i < movies.length; i++) {
-                System.out.println((i + 1) + " " + titles.get(movies[i]));
-            }
 
-            titles.clear();
+//            try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("text/TopMovies.txt"), "utf-8")))
+//            {
+                for(int i = 0 ;i < movies.length; i++) {
+//                    writer.write((i + 1) + " " + titles.get(movies[i]) + "\n");
+                    System.out.println((i + 1) + " " + titles.get(movies[i]));
+                }
+//            } catch (IOException e) {
+//                System.out.println(e.getMessage());
+//            } finally {
+                titles.clear();
 
-            int[] users = getTopTenUsers("txt/TopTenUsersSorted/part-r-00000");
+
+
+
+//            }
+
+            int[] users = getTopTenUsers(args[4] + "/part-r-00000");
 
             System.out.println("Top Users");
 
-            for(int i = 0 ;i < size; i++) {
-                System.out.println((i + 1) + " " + users[i]);
-            }
+//            try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("text/TopUsers.txt"), "utf-8")))
+//            {
+                for(int i = 0 ;i < size; i++) {
+//                    writer.write((i + 1) + " " + users[i] + "\n");
+                    System.out.println((i + 1) + " " + users[i]);
+                }
+//            } catch (IOException e) {
+//                System.out.println(Arrays.toString(e.getStackTrace()));
+//            }
         }
         catch (Exception e)
         {
@@ -48,58 +67,6 @@ public class NetflixAnalysis  extends Configured implements Tool
             System.exit(-1);
         }
     }
-
-//    private static TreeMap<Integer, Integer> getTopTenUsers(String path)
-//    {
-//        BufferedReader file_reader = null;
-//        TreeMap<Integer, Integer> data = new TreeMap<>(Collections.reverseOrder());
-//
-//        try
-//        {
-//            file_reader = new BufferedReader(new FileReader(new File(path)));
-//
-//            String line;
-//
-//            String[] movies = null;
-//
-//            while((line = file_reader.readLine()) != null)
-//            {
-//
-//                movies = line.split("\t");
-//                System.out.println(movies[1] + " " + movies[0]);
-//
-//                data.put(Integer.parseInt(movies[1]), Integer.parseInt(movies[0]));
-//
-//                System.out.println(data.get(Integer.parseInt(movies[1])));
-//
-//
-//            }
-//        }
-//        catch (FileNotFoundException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        finally
-//        {
-//            if (file_reader != null)
-//            {
-//                try
-//                {
-//                    file_reader.close();
-//                }
-//                catch (IOException e)
-//                {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//
-//        return data;
-//    }
 
     private static int[] getTopTenUsers(String path)
     {
@@ -237,8 +204,10 @@ public class NetflixAnalysis  extends Configured implements Tool
         Job top_ten_movies_job = new Job();
         top_ten_movies_job.setJarByClass(NetflixAnalysis.class);
         top_ten_movies_job.setJobName("NetflixTopMoviesAnalysis");
-        FileInputFormat.addInputPath(top_ten_movies_job, new Path("txt/TrainingRatings.txt"));
-        FileOutputFormat.setOutputPath(top_ten_movies_job, new Path("txt/TopTenMovies"));
+//        FileInputFormat.addInputPath(top_ten_movies_job, new Path("txt/TrainingRatings.txt"));
+//        FileOutputFormat.setOutputPath(top_ten_movies_job, new Path("txt/TopTenMovies"));
+        FileInputFormat.addInputPath(top_ten_movies_job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(top_ten_movies_job, new Path(args[1]));
         top_ten_movies_job.setOutputKeyClass(Text.class);
         top_ten_movies_job.setOutputValueClass(FloatWritable.class);
         top_ten_movies_job.setOutputFormatClass(TextOutputFormat.class);
@@ -254,8 +223,8 @@ public class NetflixAnalysis  extends Configured implements Tool
             Job top_ten_movies_sorter_job = new Job();
             top_ten_movies_sorter_job.setJarByClass(NetflixAnalysis.class);
             top_ten_movies_sorter_job.setJobName("NetflixTopMoviesAnalysisSorter");
-            FileInputFormat.addInputPath(top_ten_movies_sorter_job, new Path("txt/TopTenMovies/part-r-00000"));
-            FileOutputFormat.setOutputPath(top_ten_movies_sorter_job, new Path("txt/TopTenMoviesSorted"));
+            FileInputFormat.addInputPath(top_ten_movies_sorter_job, new Path(args[1] + "/part-r-00000"));
+            FileOutputFormat.setOutputPath(top_ten_movies_sorter_job, new Path(args[2]));
             top_ten_movies_sorter_job.setSortComparatorClass(FloatSortDesc.class);
             top_ten_movies_sorter_job.setOutputKeyClass(FloatWritable.class);
             top_ten_movies_sorter_job.setOutputValueClass(IntWritable.class);
@@ -271,8 +240,8 @@ public class NetflixAnalysis  extends Configured implements Tool
                 Job top_ten_users_job = new Job();
                 top_ten_users_job.setJarByClass(NetflixAnalysis.class);
                 top_ten_users_job.setJobName("NetflixTopUsersAnalysis");
-                FileInputFormat.addInputPath(top_ten_users_job, new Path("txt/TrainingRatings.txt"));
-                FileOutputFormat.setOutputPath(top_ten_users_job, new Path("txt/TopTenUsers"));
+                FileInputFormat.addInputPath(top_ten_users_job, new Path(args[0]));
+                FileOutputFormat.setOutputPath(top_ten_users_job, new Path(args[3]));
                 top_ten_users_job.setOutputKeyClass(Text.class);
                 top_ten_users_job.setOutputValueClass(IntWritable.class);
                 top_ten_users_job.setOutputFormatClass(TextOutputFormat.class);
@@ -286,8 +255,8 @@ public class NetflixAnalysis  extends Configured implements Tool
                     Job top_ten_users_sorter_job = new Job();
                     top_ten_users_sorter_job.setJarByClass(NetflixAnalysis.class);
                     top_ten_users_sorter_job.setJobName("NetflixTopUsersSorterAnalysis");
-                    FileInputFormat.addInputPath(top_ten_users_sorter_job, new Path("txt/TopTenUsers/part-r-00000"));
-                    FileOutputFormat.setOutputPath(top_ten_users_sorter_job, new Path("txt/TopTenUsersSorted"));
+                    FileInputFormat.addInputPath(top_ten_users_sorter_job, new Path(args[3] + "/part-r-00000"));
+                    FileOutputFormat.setOutputPath(top_ten_users_sorter_job, new Path(args[4]));
                     top_ten_users_sorter_job.setSortComparatorClass(IntSortDesc.class);
                     top_ten_users_sorter_job.setOutputKeyClass(IntWritable.class);
                     top_ten_users_sorter_job.setOutputValueClass(IntWritable.class);

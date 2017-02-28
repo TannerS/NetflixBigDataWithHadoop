@@ -14,8 +14,6 @@ public class NetFlixTopTenUsersMapperSorter extends Mapper<LongWritable, Text, I
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         String[] output =  value.toString().split("\t");
 
-        System.out.print("VALUE((((((((((((((((((((((((((((((((((((" + value);
-
         new_key.set(Integer.parseInt(output[1]));
         new_value.set(Integer.parseInt(output[0]));
         context.write(new_key, new_value);
