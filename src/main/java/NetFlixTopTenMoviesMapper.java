@@ -82,8 +82,6 @@ public class NetFlixTopTenMoviesMapper extends Mapper<LongWritable, Text, Text, 
         String[] output =  value.toString().split(",");
         // 0 index ia movie id, 1 is user id (not needed for this job), 2 index is the rating
 
-//        System.out.println("KEY: " + output[0] + " value: " + output[2]);
-
         new_key.set(output[0]);
         new_value.set(Float.valueOf(output[2]));
         context.write(new_key, new_value);

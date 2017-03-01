@@ -22,44 +22,30 @@ public class NetflixAnalysis  extends Configured implements Tool
         try
         {
             int status = ToolRunner.run(new NetflixAnalysis(), args);
-//
-//            int[] movies = getTopTenMovies("txt/TopTenMoviesSorted/part-r-00000");
+
             int[] movies = getTopTenMovies(args[2] + "/part-r-00000");
             HashMap<Integer, String> titles = loadTitles(args[5]);
 
+            System.out.println("");
             System.out.println("Top Movies");
-            System.out.println(System.getProperty("user.dir"));
+            System.out.println("");
 
+            for(int i = 0 ;i < movies.length; i++) {
+                System.out.println((i + 1) + " " + titles.get(movies[i]));
+            }
 
-//            try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("text/TopMovies.txt"), "utf-8")))
-//            {
-                for(int i = 0 ;i < movies.length; i++) {
-//                    writer.write((i + 1) + " " + titles.get(movies[i]) + "\n");
-                    System.out.println((i + 1) + " " + titles.get(movies[i]));
-                }
-//            } catch (IOException e) {
-//                System.out.println(e.getMessage());
-//            } finally {
-                titles.clear();
+            titles.clear();
 
-
-
-
-//            }
 
             int[] users = getTopTenUsers(args[4] + "/part-r-00000");
 
+            System.out.println("");
             System.out.println("Top Users");
+            System.out.println("");
 
-//            try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("text/TopUsers.txt"), "utf-8")))
-//            {
-                for(int i = 0 ;i < size; i++) {
-//                    writer.write((i + 1) + " " + users[i] + "\n");
-                    System.out.println((i + 1) + " " + users[i]);
-                }
-//            } catch (IOException e) {
-//                System.out.println(Arrays.toString(e.getStackTrace()));
-//            }
+            for(int i = 0 ;i < size; i++) {
+                System.out.println((i + 1) + " " + users[i]);
+            }
         }
         catch (Exception e)
         {

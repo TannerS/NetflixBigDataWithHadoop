@@ -15,8 +15,6 @@ public class NetFlixTopTenUsersMapper extends Mapper<LongWritable, Text, Text, I
         String[] output =  value.toString().split(",");
         new_key.set(output[1]);
 
-//        System.out.println("KEY: " + output[1] + " value: " + increment);
-
         context.write(new_key, increment);
     }
 }
